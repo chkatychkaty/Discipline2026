@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>自律的朝聖之旅</title>
-
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="manifest" href="manifest.json">
-
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -25,8 +22,6 @@
         .container { width: 92%; max-width: 550px; margin-top: 35px; padding-bottom: 60px; }
         .stats-panel { background: var(--card-white); border-radius: 18px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
         .panel-title { font-weight: bold; margin-bottom: 15px; display: block; font-size: 0.95rem; }
-        
-        /* 日曆 Grid */
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; }
         .weekday-label { font-size: 0.7rem; font-weight: bold; color: var(--text-sub); padding-bottom: 5px; }
         .calendar-cell { aspect-ratio: 0.8; border-radius: 8px; display: flex; flex-direction: column; align-items: center; padding-top: 5px; font-size: 0.7rem; background: #F9F7F5; transition: 0.3s; color: var(--text-sub); cursor: pointer; border: 2px solid transparent; }
@@ -34,32 +29,29 @@
         .cell-perfect { background-color: var(--primary-coral) !important; color: white !important; }
         .cell-good { background-color: #F8BDBD !important; color: white !important; }
         .cell-started { background-color: #EAE3DC !important; color: var(--text-main) !important; }
-
         .emoji-heart { color: #FF6B6B; font-style: normal; }
         .emoji-broken { filter: grayscale(100%) brightness(0%); display: inline-block; font-style: normal; }
         .emoji-trail { font-size: 0.5rem; line-height: 1.1; margin-top: 3px; word-break: break-all; }
-        
         .item-card { background: var(--card-white); padding: 16px; border-radius: 12px; margin-bottom: 12px; display: flex; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.02); border-left: 4px solid transparent; transition: 0.3s; }
         .item-card.completed { border-left-color: var(--soft-rose); }
         .item-card.completed span { text-decoration: line-through; color: #B5A9A4; }
         .item-card.rest-day { background: #F0EDE9; opacity: 0.5; cursor: not-allowed; border-left-color: var(--disabled-gray); }
-        
         .sweets-zone { flex-direction: column; align-items: flex-start; gap: 12px; border-left: 4px solid #333; }
         .sweets-row { display: flex; width: 100%; justify-content: space-between; align-items: center; }
         .heart-btn { background: #F9F7F5; border: 1px solid #EEE; border-radius: 20px; padding: 6px 15px; cursor: pointer; font-size: 0.85rem; }
-        
         .progress-bar-bg { height: 8px; background: #EAE3DC; border-radius: 10px; overflow: hidden; margin: 15px 0; }
         .progress-bar-fill { height: 100%; width: 0%; background: var(--primary-coral); transition: 0.6s ease; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
         input[type="checkbox"] { width: 18px; height: 18px; margin-right: 12px; accent-color: var(--primary-coral); cursor: pointer; }
-
         .weekly-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .week-box { padding: 15px 5px; border-radius: 10px; background: #EEE; text-align: center; font-size: 0.8rem; }
-        .week-done { background: var(--weekly-blue); color: white; }
+        .week-box { padding: 15px 5px; border-radius: 10px; background: #EEE; text-align: center; font-size: 0.8rem; cursor: pointer; border: 2px solid transparent; }
+        .week-box.active-week { border-color: var(--weekly-blue); background: #FFF; box-shadow: 0 0 8px rgba(157,175,189,0.3); }
+        .week-done { background: var(--weekly-blue) !important; color: white !important; }
         .monthly-track { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
-        .month-circle { aspect-ratio: 1; border-radius: 50%; background: #EEE; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: 0.3s; }
-        .month-done { background: var(--monthly-purple); color: white; }
+        .month-circle { aspect-ratio: 1; border-radius: 50%; background: #EEE; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; transition: 0.3s; cursor: pointer; border: 2px solid transparent; }
+        .month-circle.active-month { border-color: var(--monthly-purple); background: #FFF; box-shadow: 0 0 8px rgba(176,164,177,0.3); }
+        .month-done { background: var(--monthly-purple) !important; color: white !important; }
     </style>
 </head>
 <body>
@@ -77,10 +69,8 @@
         <span class="panel-title" id="cal-title">成長軌跡</span>
         <div class="calendar-grid" id="calendar-grid"></div>
     </div>
-    
     <div id="panel-weekly" class="stats-panel" style="display:none;"><span class="panel-title" id="week-panel-title">本月週次里程</span><div class="weekly-grid" id="weekly-grid"></div></div>
     <div id="panel-monthly" class="stats-panel" style="display:none;"><span class="panel-title">年度達標足跡</span><div class="monthly-track" id="monthly-track"></div></div>
-    
     <div class="stats-panel" style="padding:15px; margin-top:-10px;">
         <div style="display: flex; justify-content: space-between; font-size: 14px;">
             <span id="tab-title-display">進度追蹤</span>
@@ -88,7 +78,6 @@
         </div>
         <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-fill"></div></div>
     </div>
-
     <div id="daily" class="tab-content active">
         <div class="item-card"><input type="checkbox" onchange="fireCheckboxConfetti(this); update();"> <span>有氧運動</span></div>
         <div class="item-card"><input type="checkbox" onchange="fireCheckboxConfetti(this); update();"> <span>重量訓練</span></div>
@@ -97,24 +86,16 @@
         <div class="item-card"><input type="checkbox" onchange="fireCheckboxConfetti(this); update();"> <span>靜心閱讀時間</span></div>
         <div class="item-card"><input type="checkbox" onchange="fireCheckboxConfetti(this); update();"> <span>十點前就寢</span></div>
         <div class="item-card"><input type="checkbox" onchange="fireCheckboxConfetti(this); update();"> <span>心情平穩不遷怒</span></div>
-        
         <div class="item-card sweets-zone">
             <div style="font-weight: bold; font-size: 0.9rem;">🍰 糕點意志力挑戰</div>
-            <div class="sweets-row">
-                <span>忍住購買糕點的衝動</span>
-                <button class="heart-btn" onclick="addHeart('❤️')">❤️ 忍住了</button>
-            </div>
-            <div class="sweets-row">
-                <span>無法忍住衝動，購買了糕點</span>
-                <button class="heart-btn" onclick="addHeart('💔')">💔 購買了</button>
-            </div>
+            <div class="sweets-row"><span>忍住購買糕點的衝動</span><button class="heart-btn" onclick="addHeart('❤️')">❤️ 忍住了</button></div>
+            <div class="sweets-row"><span>無法忍住衝動，購買了糕點</span><button class="heart-btn" onclick="addHeart('💔')">💔 購買了</button></div>
             <div id="today-emoji-status" style="font-size: 0.8rem; margin-top: 5px; color: var(--text-sub);">今日記錄：尚未有資料</div>
         </div>
     </div>
-
     <div id="weekly" class="tab-content">
-        <div class="item-card"><input type="checkbox" id="week-cardio-cb" disabled> <span>有氧運動 ≥ 3次/週</span><span id="cardio-count-label" style="font-size:0.7rem; color:var(--primary-coral); font-weight:bold; margin-left:auto;">0/3</span></div>
-        <div class="item-card"><input type="checkbox" id="week-strength-cb" disabled> <span>重量訓練 ≥ 2次/週</span><span id="strength-count-label" style="font-size:0.7rem; color:var(--primary-coral); font-weight:bold; margin-left:auto;">0/2</span></div>
+        <div class="item-card"><input type="checkbox" id="week-cardio-cb" onchange="update();"> <span>有氧運動 ≥ 3次/週</span><span id="cardio-count-label" style="font-size:0.7rem; color:var(--primary-coral); font-weight:bold; margin-left:auto;">0/3</span></div>
+        <div class="item-card"><input type="checkbox" id="week-strength-cb" onchange="update();"> <span>重量訓練 ≥ 2次/週</span><span id="strength-count-label" style="font-size:0.7rem; color:var(--primary-coral); font-weight:bold; margin-left:auto;">0/2</span></div>
     </div>
     <div id="monthly" class="tab-content">
         <div class="item-card"><input type="checkbox" onchange="update();"> <span>體重維持 < 58 kg</span></div>
@@ -122,26 +103,27 @@
         <div class="item-card"><input type="checkbox" onchange="update();"> <span>月開支控制 < 250,000</span></div>
     </div>
 </div>
-
 <script>
     let activeDate = new Date();
     let currentTab = 'daily';
-    // 為了確保版本乾淨，更換存檔鍵名
-    let db = JSON.parse(localStorage.getItem('goal_final_v24')) || { daily_history: {}, daily_ticks: {}, daily_emojis: {}, weekly: {}, monthly: {} };
+    let selectedWeek = 1;
+    let selectedMonth = new Date().getMonth() + 1; // 記錄當前選中的月份
+    let db = JSON.parse(localStorage.getItem('goal_final_v26')) || { daily_history: {}, daily_ticks: {}, daily_emojis: {}, weekly: {}, monthly: {}, weekly_ticks: {}, monthly_ticks: {} };
 
     function fireCheckboxConfetti(el) { if (el.checked) confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 }, colors: ['#E57373', '#D4A5A5', '#FFF'] }); }
 
     function initPage() {
-        loadDayData(new Date()); 
+        const today = new Date();
+        selectedWeek = Math.ceil((today.getDate() + new Date(today.getFullYear(), today.getMonth(), 1).getDay()) / 7);
+        selectedMonth = today.getMonth() + 1;
+        loadDayData(today); 
     }
 
     function loadDayData(targetDate) {
         activeDate = new Date(targetDate);
         const key = activeDate.toDateString();
         const dayOfWeek = activeDate.getDay();
-        
         document.getElementById('current-date').innerText = activeDate.toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
-        
         const ticks = db.daily_ticks[key] || [];
         document.querySelectorAll('#daily .item-card:not(.sweets-zone)').forEach((item, i) => {
             const allowed = item.getAttribute('data-days');
@@ -156,9 +138,31 @@
             }
             cb.checked = !cb.disabled && (ticks[i] || false);
         });
-
         updateEmojiUI();
         update(false); 
+        refreshStats();
+    }
+
+    function loadWeekData(wIdx) {
+        selectedWeek = wIdx;
+        checkWeeklyAuto(false, wIdx);
+        const key = `${activeDate.getFullYear()}-${activeDate.getMonth()+1}-W${wIdx}`;
+        const ticks = db.weekly_ticks[key] || [false, false];
+        document.getElementById('week-cardio-cb').checked = ticks[0];
+        document.getElementById('week-strength-cb').checked = ticks[1];
+        update(false);
+        refreshStats();
+    }
+
+    function loadMonthData(mIdx) {
+        selectedMonth = mIdx;
+        const key = `${activeDate.getFullYear()}-M${mIdx}`;
+        const ticks = db.monthly_ticks[key] || [false, false, false];
+        const inputs = document.querySelectorAll('#monthly input[type="checkbox"]');
+        inputs.forEach((input, i) => {
+            input.checked = ticks[i] || false;
+        });
+        update(false);
         refreshStats();
     }
 
@@ -167,16 +171,12 @@
         db.daily_emojis[key] = (db.daily_emojis[key] || "") + emoji;
         if (emoji === '❤️') confetti({ particleCount: 60, spread: 80, origin: { y: 0.8 }, colors: ['#FF6B6B'] });
         updateEmojiUI();
-        update(); // 這會觸發存檔並重新計算進度條
+        update();
     }
 
     function formatEmojis(str) {
         if (!str) return "";
-        return str.split('').map(char => {
-            if (char === '❤️') return `<span class="emoji-heart">❤️</span>`;
-            if (char === '💔') return `<span class="emoji-broken">💔</span>`;
-            return char;
-        }).join('');
+        return str.split('').map(char => char === '❤️' ? '<span class="emoji-heart">❤️</span>' : char === '💔' ? '<span class="emoji-broken">💔</span>' : char).join('');
     }
 
     function updateEmojiUI() {
@@ -185,7 +185,6 @@
     }
 
     function update(save = true) {
-        const key = activeDate.toDateString();
         const activeTab = document.getElementById(currentTab);
         const inputs = Array.from(activeTab.querySelectorAll('input[type="checkbox"]'));
         const activeInputs = inputs.filter(i => !i.disabled);
@@ -193,94 +192,88 @@
         let percent = activeInputs.length ? Math.round((checked.length / activeInputs.length) * 100) : 0;
         
         if(currentTab === 'daily') {
+            const key = activeDate.toDateString();
             const emo = db.daily_emojis[key] || "";
-            const h = (emo.match(/❤️/g) || []).length;
-            const b = (emo.match(/💔/g) || []).length;
-            percent = Math.min(100, Math.max(0, percent + h - b));
-            
-            inputs.forEach(i => {
-                if(i.parentElement.classList.contains('item-card')) {
-                    i.parentElement.classList.toggle('completed', i.checked);
-                }
-            });
-
+            percent = Math.min(100, Math.max(0, percent + (emo.match(/❤️/g)||[]).length - (emo.match(/💔/g)||[]).length));
+            inputs.forEach(i => i.parentElement.classList.contains('item-card') && i.parentElement.classList.toggle('completed', i.checked));
             if(save) {
                 db.daily_history[key] = percent;
-                db.daily_ticks[key] = Array.from(document.querySelectorAll('#daily input[type="checkbox"]')).map(i => i.checked);
-                checkWeeklyAuto();
+                db.daily_ticks[key] = inputs.map(i => i.checked);
+                checkWeeklyAuto(true);
+            }
+        } else if(currentTab === 'weekly') {
+            const key = `${activeDate.getFullYear()}-${activeDate.getMonth()+1}-W${selectedWeek}`;
+            inputs.forEach(i => i.parentElement.classList.toggle('completed', i.checked));
+            if(save) {
+                const cardioDone = document.getElementById('week-cardio-cb').checked;
+                const strengthDone = document.getElementById('week-strength-cb').checked;
+                db.weekly_ticks[key] = [cardioDone, strengthDone];
+                db.weekly[key] = (cardioDone && strengthDone);
             }
         } else if(currentTab === 'monthly') {
-            db.monthly[`${activeDate.getFullYear()}-M${activeDate.getMonth()+1}`] = (percent === 100);
+            const key = `${activeDate.getFullYear()}-M${selectedMonth}`;
+            inputs.forEach(i => i.parentElement.classList.toggle('completed', i.checked));
+            if(save) {
+                db.monthly_ticks[key] = inputs.map(i => i.checked);
+                db.monthly[key] = (percent === 100);
+            }
         }
 
         document.getElementById('progress-fill').style.width = percent + '%';
         document.getElementById('percent-text').innerText = percent + '%';
-
-        if(save) {
-            refreshStats();
-            localStorage.setItem('goal_final_v24', JSON.stringify(db));
-        }
+        if(save) { refreshStats(); localStorage.setItem('goal_final_v26', JSON.stringify(db)); }
     }
 
-    function checkWeeklyAuto() {
-        const start = new Date(activeDate);
-        start.setDate(start.getDate() - start.getDay());
+    function checkWeeklyAuto(isDailyCall = false, targetWeekIdx = null) {
+        const weekToCalc = targetWeekIdx || selectedWeek;
+        const year = activeDate.getFullYear();
+        const month = activeDate.getMonth();
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const startDay = (weekToCalc - 1) * 7 - firstDayOfMonth + 1;
+        const start = new Date(year, month, startDay);
         let c=0, s=0;
         for(let i=0; i<7; i++){
-            const ticks = db.daily_ticks[new Date(start).toDateString()];
+            const checkDate = new Date(start);
+            checkDate.setDate(start.getDate() + i);
+            const ticks = db.daily_ticks[checkDate.toDateString()];
             if(ticks){ if(ticks[0]) c++; if(ticks[1]) s++; }
-            start.setDate(start.getDate()+1);
         }
         document.getElementById('cardio-count-label').innerText = `${c}/3`;
         document.getElementById('strength-count-label').innerText = `${s}/2`;
-        const cbC = document.getElementById('week-cardio-cb'), cbS = document.getElementById('week-strength-cb');
-        cbC.checked = (c>=3); cbS.checked = (s>=2);
-        const wIdx = Math.ceil((activeDate.getDate() + new Date(activeDate.getFullYear(), activeDate.getMonth(), 1).getDay()) / 7);
-        db.weekly[`${activeDate.getFullYear()}-${activeDate.getMonth()+1}-W${wIdx}`] = (cbC.checked && cbS.checked);
+        const key = `${year}-${month+1}-W${weekToCalc}`;
+        const cardioDone = (c >= 3);
+        const strengthDone = (s >= 2);
+        if (selectedWeek === weekToCalc) {
+            document.getElementById('week-cardio-cb').checked = cardioDone;
+            document.getElementById('week-strength-cb').checked = strengthDone;
+        }
+        db.weekly_ticks[key] = [cardioDone, strengthDone];
+        db.weekly[key] = (cardioDone && strengthDone);
     }
 
     function refreshStats() {
-        const grid = document.getElementById('calendar-grid');
-        grid.innerHTML = '';
-        
-        ['日','一','二','三','四','五','六'].forEach(w => {
-            const el = document.createElement('div'); el.className = 'weekday-label'; el.innerText = w; grid.appendChild(el);
-        });
-
+        const grid = document.getElementById('calendar-grid'); grid.innerHTML = '';
+        ['日','一','二','三','四','五','六'].forEach(w => { const el = document.createElement('div'); el.className = 'weekday-label'; el.innerText = w; grid.appendChild(el); });
         const year = activeDate.getFullYear(), month = activeDate.getMonth();
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
-        for(let i=0; i<firstDay; i++){ grid.appendChild(document.createElement('div')); }
-
+        const firstDay = new Date(year, month, 1).getDay(), daysInMonth = new Date(year, month + 1, 0).getDate();
+        for(let i=0; i<firstDay; i++) grid.appendChild(document.createElement('div'));
         for(let d=1; d<=daysInMonth; d++){
-            const dObj = new Date(year, month, d);
-            const dKey = dObj.toDateString();
-            const p = db.daily_history[dKey] || 0;
-            const emo = db.daily_emojis[dKey] || "";
-            const cell = document.createElement('div');
-            cell.className = 'calendar-cell';
-            if(dKey === activeDate.toDateString()) cell.classList.add('active-edit');
-            if (p >= 100) cell.classList.add('cell-perfect');
-            else if (p >= 50) cell.classList.add('cell-good');
-            else if (p > 0) cell.classList.add('cell-started');
-            
-            cell.innerHTML = `<b>${d}</b><span style="font-size:0.5rem">${p}%</span><div class="emoji-trail">${formatEmojis(emo)}</div>`;
-            cell.onclick = () => loadDayData(dObj);
-            grid.appendChild(cell);
+            const dObj = new Date(year, month, d), dKey = dObj.toDateString(), p = db.daily_history[dKey] || 0;
+            const cell = document.createElement('div'); cell.className = `calendar-cell ${dKey === activeDate.toDateString()?'active-edit':''} ${p>=100?'cell-perfect':p>=50?'cell-good':p>0?'cell-started':''}`;
+            cell.innerHTML = `<b>${d}</b><span style="font-size:0.5rem">${p}%</span><div class="emoji-trail">${formatEmojis(db.daily_emojis[dKey])}</div>`;
+            cell.onclick = () => loadDayData(dObj); grid.appendChild(cell);
         }
-
         const wGrid = document.getElementById('weekly-grid'); wGrid.innerHTML = '';
-        for(let w=1; w<=5; w++){
+        for(let w=1; w<=Math.ceil((daysInMonth + firstDay) / 7); w++){
             const done = db.weekly[`${year}-${month+1}-W${w}`];
-            const box = document.createElement('div');
-            box.className = 'week-box' + (done?' week-done':''); box.innerText = `第${w}週`; wGrid.appendChild(box);
+            const box = document.createElement('div'); box.className = `week-box ${done?'week-done':''} ${w===selectedWeek?'active-week':''}`;
+            box.innerText = `第${w}週`; box.onclick = () => loadWeekData(w); wGrid.appendChild(box);
         }
         const mTrack = document.getElementById('monthly-track'); mTrack.innerHTML = '';
         for(let m=1; m<=12; m++){
             const done = db.monthly[`${year}-M${m}`];
-            const circle = document.createElement('div');
-            circle.className = 'month-circle' + (done?' month-done':''); circle.innerText = m+'月'; mTrack.appendChild(circle);
+            const circle = document.createElement('div'); circle.className = `month-circle ${done?'month-done':''} ${m===selectedMonth?'active-month':''}`; 
+            circle.innerText = m+'月'; circle.onclick = () => loadMonthData(m); mTrack.appendChild(circle);
         }
     }
 
@@ -288,15 +281,13 @@
         currentTab = id;
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-        document.getElementById('panel-daily').style.display = (id === 'daily' ? 'block' : 'none');
-        document.getElementById('panel-weekly').style.display = (id === 'weekly' ? 'block' : 'none');
-        document.getElementById('panel-monthly').style.display = (id === 'monthly' ? 'block' : 'none');
+        ['panel-daily','panel-weekly','panel-monthly'].forEach(p => document.getElementById(p).style.display = p.includes(id)?'block':'none');
         document.getElementById(id).classList.add('active');
         document.getElementById('btn-'+id).classList.add('active');
         update(false);
     }
-
     window.onload = initPage;
 </script>
 </body>
 </html>
+
